@@ -10,7 +10,7 @@
 (function ($) {
 	var defaultOptions = {
 		debug : false,
-		debug_lvl : 2,
+		debug_lvl : 1,
 		plugin_name : 'simpleCarousel',
 		data_prefix : 'carousel',
 		class_prefix : 'carousel',
@@ -149,10 +149,17 @@
 				if (active_height > 0) $wrapper.height(active_height);
 			}).trigger('resize');
 			
-			$this.on('click', '.carousel_pagination .dot', function (e) {
-				e.preventDefault();
-				methods.goto_dot.call($this, data, $(this));
-			});
+			if ($.fn.simpleCarousel.old_jquery) {
+				$this.delegate('.carousel_pagination .dot', 'click', function (e) {
+					e.preventDefault();
+					methods.goto_dot.call($this, data, $(this));
+				});
+			} else {
+				$this.on('click', '.carousel_pagination .dot', function (e) {
+					e.preventDefault();
+					methods.goto_dot.call($this, data, $(this));
+				});
+			}
 			//////////////////////
 			
 			carousel_count++;
@@ -425,289 +432,14 @@
 		// Everyone Must go through init
 		return methods['init'].call(this, fn, args, settings);
 	};
-	/*
-	$.fn.simpleCarousel = function (options) {
-		
-		var $window = $(window);
-		
-		/////////////////////
-		// Per elements
-		/////////////////////
-		return this.each(function () {
-			// initialize
-			var carousel = {};
-			var o = carousel.options = $.extend({}, defaultOptions, options);
-			var container_id = this.id;
-			var carousel_id = 'cjs_' + carousel_count;
-			
-			var $this = $(this).addClass(carousel_id);
-			
-			// set index
-			carousel.current_i = 0;
-			
-			// log
-			if (o.debug) console.log('carousel:' + carousel_id +' init container:', container_id);
-			
-			// has already been initialized
-			if (typeof $this.data('carousel') !== 'undefined') {
-				if (o.debug) console.log('carousel:' + carousel_id +' already init');
-				return true;
-			}
-			
-			// DOM
-			var $wrapper,
-				$slides,
-				$pagination,
-				$dots;
-			
-			$wrapper = $this.find('.carousel_wrapper');
-			$slides = $wrapper.find('.carousel_slide');
-			$pagination = $this.find('.carousel_pagination');
-			//$dots = $pagination.find('.dot.template');
-		
-			// validate expected dom elements
-			if (!$wrapper.length || !$slides.length) {// || !$pagination.length
-				if (o.debug) console.log('carousel:' + carousel_id +' DOM element not found');
-				$this.addClass('failed_carousel').data('failed_carousel', true);
-				return true;
-			}
-			
-			var section_width = $this.width();
-			//var timeline = new TimelineMax();
-			
-			// make 1st active
-			if (!$slides.filter('.active').length) $slides.eq(0).addClass('active');
-			
-			// wipe animation
-			if (typeof $this.data('carousel-animation') !== 'undefined') {
-				o.animation = $this.data('carousel-animation');
-			}
-			if (o.animation !== 'default') $this.addClass('animation-' + o.animation);
-			
-			
-			//////////////////////
-			// create pagination
-			//////////////////////
-			if (o.build_pagination) {
-				// log
-				if (o.debug) console.log('carousel:' + carousel_id +' will begin pagination');
-				
-				// build
-				$pagination = carousel_factory.create_pagination($slides.length);
-				$this.append($pagination);			
-				$dots = $pagination.find('.dot');
-				// activate first
-				$dots.first().addClass('active');
-				// delay the display of pagination until image is loaded
-				var $image_exist = $slides.filter('.active').find('img');
-				if ($dots.length > 1 && o.delay_pagination && $image_exist.length) {
-					if (o.debug) console.log('carousel:' + carousel_id + ' will wait for load', $image_exist);
-					var timer = setTimeout(function () {
-						if (o.debug) console.log('carousel:' + carousel_id + ' image load: time is up');
-						$image_exist.trigger('load');
-						$pagination.addClass('timer-done');
-					}, 4000);
-					$image_exist.one('load', function () {
-						if (o.debug) console.log('carousel:' + carousel_id + ' image loaded');
-						clearTimeout(timer);
-						$pagination.addClass('enable');
-						$this.trigger('pagination_enabled');
-					});
-					
-				} else if ($dots.length > 1) {
-					$pagination.addClass('enable');
-					$this.trigger('pagination_enabled');
-					
-				}
-			}
-						
-			// Position Slides
-			if (o.animation_direction === 'horizontal') {
-				TweenMax.set($slides.not('.active'), {xPercent : 100});
-			} else {
-				TweenMax.set($slides.not('.active'), {yPercent : 100});
-			}
-			
-			//////////////////////
-			// events
-			//////////////////////
-			$window.on('resize', function () {
-				$this.trigger('layout.carousel');
-				if (o.debug) console.log('carousel-event:' + carousel_id +' height', $slides.filter('.active'), $slides.filter('.active').height());
-				var active_height = parseInt($slides.filter('.active').height(), 10);
-					active_height = isNaN(active_height) ? 0 : active_height;
-				
-				if (o.debug) console.log(active_height);
-				
-				if (active_height > 0) $wrapper.height(active_height);
-			}).trigger('resize');
-			
-			$this.on('layout.carousel', function (e) {
-				if (!o.build_pagination) return;
-				
-				if (o.debug) console.log('carousel-event:' + carousel_id +' layout');
-				
-				section_width = $this.width();
-				
-				// Position pagination
-				var margin = parseInt($dots.css('margin-right'), 10);
-					margin = isNaN(margin) ? 0 : margin;
-				var dot_width = $dots.innerWidth();
-				var pagination_width = $dots.length * (dot_width + margin) - margin;
-				// log
-				if (o.debug) console.log('carousel:' + carousel_id +' mar', margin, dot_width, pagination_width, section_width);
-				var val = (section_width - pagination_width) / 2;
-				
-				if (pagination_width > dot_width) $pagination.css('left', val);//.addClass('ready');
-								
-			})
-			.on('transition.carousel', function (e, new_i) {
-				if (o.debug) console.log('carousel-event:' + carousel_id +' transition:', new_i);
-				
-				// no change
-				if (new_i < 0 || new_i === carousel.current_i || new_i > $slides.length) {
-					if (o.debug) console.log('carousel-event:' + carousel_id +' transition: no change');
-					return;
-				}
-				if (carousel.transition) {
-					if (o.debug) console.log('carousel-event:' + carousel_id +' transition: unavailable');
-					return;
-				}
-				// direction of animation
-				var dir = -1;
-					dir = new_i < carousel.current_i ? 1 : dir;
-				
-				// flag transition
-				carousel.transition = true;
-				
-				// target
-				var $target = $slides.eq(new_i);
-				if (!$target.length) {
-					if (o.debug) console.log('carousel-event:' + carousel_id +' transition: no target found');
-					carousel.transition = false;
-					return;
-				}
-				// old target
-				var $old = $slides.eq(carousel.current_i);
-				if (!$old.length) {
-					if (o.debug) console.log('carousel-event:' + carousel_id +' transition: no previous target found');
-					carousel.transition = false;
-					return;
-				}
-				// no animation
-				if (typeof methods.animations[o.animation] === 'undefined' && typeof o.animations[o.animation] === 'undefined') {
-					if (o.debug) console.log('carousel-event:' + carousel_id +' transition: no animation found');
-					carousel.transition = false;
-					return;
-				}
-				var animation_fn = typeof methods.animations[o.animation] !== 'undefined' ? methods.animations : o.animations;
-				
-				animation_fn[o.animation]($target, $old, $.extend(o, { 'dir' : dir }), function () {
-					carousel.transition = false;
-					carousel.current_i = new_i;
-					$slides.removeClass('active').eq(carousel.current_i).addClass('active');
-		
-					$old.trigger('animation_complete', 'hide');
-					$target.trigger('animation_complete', 'show');
-		
-					// update pagination
-					$pagination.find('.dot').removeClass('active').eq(new_i).addClass('active');
-				});
-			})
-			// remove
-			.on('close.carousel', function (e) {
-				if (o.debug) console.log('carousel-event:' + carousel_id +' close');
-				
-				carousel.open = false;
-			})
-			// remove
-			.on('open.carousel', function (e, force) {
-				if (o.debug) console.log('carousel-event:' + carousel_id +' open');
-				
-				// global flag
-				//portfolio.carousel_open(true);
-				
-				if (carousel.open) {
-					if (o.debug) console.log('carousel-event:' + carousel_id +' open: unavailable');
-					return;
-				}
-				
-				carousel.open = true;
-				carousel.current_i = 0;
-				$slides.removeClass('active').first().addClass('active');
-				TweenMax.set($slides.first(), {xPercent : 0});
-				TweenMax.set($slides.not('.active'), {xPercent : 100});
-				$pagination.find('.dot').removeClass('active').first().addClass('active');
-				
-				$this.trigger('layout.carousel');
-				//var speed = force ? 0.2 : 1;
-				//$this.trigger('transition.carousel', [0, speed]);
-			})
-			.on('next.carousel', function () {
-				if (o.debug) console.log('carousel-event:' + carousel_id +' next');
-				
-				var new_i = carousel.current_i;
-				new_i++;
-				// no change
-				if (carousel.transition || new_i > $slides.length - 1) return;
-				// transition
-				$this.trigger('transition.carousel', new_i);
-			})
-			.on('prev.carousel', function () {
-				if (o.debug) console.log('carousel-event:' + carousel_id +' prev');
-				
-				var new_i = carousel.current_i;
-				new_i--;
-				// no change
-				if (carousel.transition || new_i < 0) return;
-				// transition
-				$this.trigger('transition.carousel', new_i);
-			});
-			
-			$this.on('click', '.carousel_pagination .dot', function (e) {
-				e.preventDefault();
-				var $li = $(this);
-				if ($li.hasClass('active')) return;
-				
-				$li.addClass('active').siblings().removeClass('active');
-				$this.trigger('transition.carousel', $li.index());
-			});
-			
-			carousel_count++;
-			$this.data('carousel', carousel);
-		});
-	};
-	*/
 	
 	// Global debug
 	$.fn.simpleCarousel.debug = false;
 	
-	// Alliases
-	$.simpleCarousel = {};
+	$.fn.simpleCarousel.old_jquery = false;
 	
-	// remove
-	$.simpleCarousel.onLast = function (target) {
-		var $this = $(target);
-		// has not been initialized
-		if (typeof $this.data('carousel') === 'undefined') {
-			//if (o.debug) console.log('carousel:' + carousel_id +' already init');
-			return null;
-		}
-		var carousel = $this.data('carousel');
-		var $slides = $this.find('.carousel_slide');
-		
-		return carousel.current_i === $slides.length - 1;
-	};
-	$.simpleCarousel.onFirst = function (target) {
-		var $this = $(target);
-		// has not been initialized
-		if (typeof $this.data('carousel') === 'undefined') {
-			//if (o.debug) console.log('carousel:' + carousel_id +' already init');
-			return null;
-		}
-		var carousel = $this.data('carousel');
-		
-		return carousel.current_i === 0;
-	};
-	
+	if (typeof $.fn.on === 'undefined') {
+		$.fn.on = $.fn.bind;
+		$.fn.simpleCarousel.old_jquery = true;
+	}
 })(jQuery);
