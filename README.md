@@ -10,11 +10,11 @@ next, previous, dot navigation, play content animations during or after carousel
 * Greensock's TweenMax
 
 ##Whats available ?
-*basic carousel controls
-*optional dot pagination
-*check wether carousel is currently on the last slide or first
-*plenty of bindable events
-*accepts custom animations to override the default animation
+* basic carousel controls
+* optional dot pagination
+* check wether carousel is currently on the last slide or first
+* plenty of bindable events
+* accepts custom animations to override the default animation
 
 ##What are the limitations ?
 * assumes all slides will be the same height
