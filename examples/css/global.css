@@ -1,0 +1,74 @@
+html, body {
+	margin: 0px;
+	padding: 0px;
+}
+#wrapper {
+	width: 100%;
+}
+.jumbotron {
+	padding: 48px;
+}
+
+.example {
+	width: 100%;
+	max-width: 960px;
+	margin: 0 auto;
+	padding-bottom: 20px;
+}
+.example .code-title {
+	margin-top: 30px;
+}
+/* BEGIN: Basic Carousel */
+.carousel .carousel_wrapper {
+	position: relative;
+	overflow: hidden;
+}
+.carousel .carousel_slide {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.carousel .carousel_slide img { width: 100%; }
+/* END: Basic Carousel */
+
+/* BEGIN: Dot Styles */
+.carousel .carousel_pagination {
+	position: absolute;
+	bottom: 10px;
+}
+.carousel .carousel_pagination .dot,
+.carousel .carousel_pagination .dot a {
+	display: block;
+	width: 10px;
+	height: 10px;
+}
+.carousel .carousel_pagination > ul,
+.carousel .carousel_pagination .dot { float: left; }
+.carousel .carousel_pagination .dot { margin-right: 10px; }
+.carousel .carousel_pagination .dot a {
+	text-indent: -99999px;
+	background: transparent url('../images/dot.png') no-repeat left top;
+}
+.carousel .carousel_pagination .dot.active a,
+.carousel .carousel_pagination .dot a:hover  { background-position: left bottom; }
+/* END: Dot Styles */
+
+#intro {
+	
+}
+	#intro .plugin-title {
+		text-align: center;
+	}
+	#intro .heading,
+	#intro p,
+	#intro li {
+	}
+	#intro ul {
+		margin: 0px;
+		font-size: 20px;
+	}
+
+
+#example-basic {
+
+}

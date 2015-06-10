@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Examples</title>
+	<meta name="generator" content="BBEdit 11.1" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.17.0/TweenMax.min.js"></script>
+	<script src="../jquery.simpleCarousel.js"></script>
+	<script src="js/global.js"></script>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="intro">
+			<div class="jumbotron plugin-title">
+				<h1>Simple Carousel JS</h1>
+				<p>A jQuery plugin to create unstyled bare bone carousels with just the essential functionality available.</p>
+			</div>
+			<div class="jumbotron">
+				<h2 class="heading">Why ?</h2>
+				<p>
+					Too many projects required carousels with custom looks and animations but same basic functionality e.g
+					next, previous, dot navigation, play content animations during or after carousel animation is complete.
+				</p>
+				
+				<h2 class="heading">Dependencies ?</h2>
+				<ul>
+					<li>jQuery</li>
+					<li>Greensock's TweenMax</li>
+				</ul>
+				
+				<h2 class="heading">Whats available ?</h2>
+				<ul>
+					<li>basic carousel controls</li>
+					<li>optional dot pagination</li>
+					<li>check wether carousel is currently on the last slide or first</li>
+					<li>plenty of bindable events</li>
+					<li>accepts custom animations to override the default animation</li>
+				</ul>
+				
+				<h2 class="heading">What are the limitations ?</h2>
+				<ul>
+					<li>assumes all slides will be the same height</li>
+				</ul>
+			</div>
+		</div>
+		<div class="example" id="example-basic">
+			<div class="example-title jumbotron">
+				<h2>Basic Example</h2>
+				<p>a simple carousel with images and dot navigation</p>
+			</div>
+			<div class="carousel" data-carousel-animation="default">
+				<div class="carousel_wrapper">
+					<div class="carousel_slide">
+						<img src="images/1.jpg">
+					</div>
+					<div class="carousel_slide">
+						<img src="images/2.jpg">
+					</div>
+					<div class="carousel_slide">
+						<img src="images/3.jpg">
+					</div>
+				</div>
+			</div>
+			<div class="code-title jumbotron">
+				<h3>HTML:</h3>
+				<pre>
+					<code class="code-box code-html">
+&lt;div class="carousel"&gt;
+	&lt;div class="carousel_wrapper"&gt;
+		&lt;div class="carousel_slide"&gt;
+			&lt;img src="images/1.jpg"&gt;
+		&lt;/div&gt;
+		&lt;div class="carousel_slide"&gt;
+			&lt;img src="images/2.jpg"&gt;
+		&lt;/div&gt;
+		&lt;div class="carousel_slide"&gt;
+			&lt;img src="images/3.jpg"&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/div&gt;
+					</code>
+				</pre>
+				<h3>CSS:</h3>
+				<pre>
+					<code class="code-box code-html">
+/* BEGIN: Basic Carousel */
+.carousel .carousel_wrapper {
+	position: relative;
+	overflow: hidden;
+}
+.carousel .carousel_slide {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.carousel .carousel_slide img { width: 100%; }
+/* END: Basic Carousel */
+
+/* BEGIN: Dot Styles */
+.carousel .carousel_pagination {
+	position: absolute;
+	bottom: 10px;
+}
+.carousel .carousel_pagination .dot,
+.carousel .carousel_pagination .dot a {
+	display: block;
+	width: 10px;
+	height: 10px;
+}
+.carousel .carousel_pagination > ul,
+.carousel .carousel_pagination .dot { float: left; }
+.carousel .carousel_pagination .dot { margin-right: 10px; }
+.carousel .carousel_pagination .dot a {
+	text-indent: -99999px;
+	background: transparent url('../images/dot.png') no-repeat left top;
+}
+.carousel .carousel_pagination .dot.active a,
+.carousel .carousel_pagination .dot a:hover  { background-position: left bottom; }
+/* END: Dot Styles */
+					</code>
+				</pre>
+				<h3>JS:</h3>
+				<pre>
+					<code class="code-box code-html">
+$('.carousel').simpleCarousel({ loop : true });
+
+window.next = function () {
+	$carousel.simpleCarousel('next');
+};
+window.prev = function () {
+	$carousel.simpleCarousel('previous', { loop : false });
+};
+					</code>
+				</pre>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
