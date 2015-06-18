@@ -7,6 +7,13 @@
 * @author Fredi Quirino <fred@firefallpro.com>
 */
 /* global TweenMax:true */
+/*
+* to-do:
+*	- animations object should be set at the plugin level, e.g $.simpleCarousel.animations
+*	so user doesn't have to redefine or pass it every time a new carousel is initiated. If
+*	user wants to use default animation then he can just set 'default'
+*
+*/
 (function ($) {
 	var defaultOptions = {
 		debug : false,
