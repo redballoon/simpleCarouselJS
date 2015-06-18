@@ -18,6 +18,7 @@ html, body {
 .example .code-title {
 	margin-top: 30px;
 }
+
 /* BEGIN: Basic Carousel */
 .carousel .carousel_wrapper {
 	position: relative;
@@ -52,6 +53,11 @@ html, body {
 .carousel .carousel_pagination .dot.active a,
 .carousel .carousel_pagination .dot a:hover  { background-position: left bottom; }
 /* END: Dot Styles */
+
+.example .carousel .carousel_slide {
+	max-height: 720px;
+	overflow: hidden;
+}
 
 #intro {
 	

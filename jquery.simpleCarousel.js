@@ -28,6 +28,9 @@
 	
 	var carousel_count = 0;
 	
+	//////////////
+	// Private
+	//////////////
 	var methods = {
 		_log : function () {
 			if (!$.fn.simpleCarousel.debug) return;
@@ -38,6 +41,13 @@
 			else if (ie && typeof arguments[0] === 'string') str = arguments[0];
 			
 			console.log(defaultOptions['plugin_name'], (ie) ? str : args);
+		},
+		_size : function (obj) {
+			var size = 0, key;
+			for (key in obj) {
+				if (obj.hasOwnProperty(key)) size++;
+			}
+			return size;
 		},
 		init : function (fn, args, options) {
 			// Toggle debug
@@ -114,6 +124,14 @@
 			});
 			
 			$this.addClass('animation-' + data.options.animation);
+			
+			// allow users to omit the horizontal and vertical keys if they
+			// are not using both
+			if (methods._size(data.options.animations) && typeof data.options.animations['horizontal'] === 'undefined' && typeof data.options.animations['vertical'] === 'undefined') {
+				var animation_methods = data.options.animations;
+				data.options.animations = {};
+				data.options.animations[data.options.animation_direction] = animation_methods;
+			}
 			
 			// initial position
 			if (typeof data.options.initial_position === 'function') {
@@ -261,7 +279,8 @@
 				internal_map = methods.animations[orientation],
 				external_map = typeof data.options.animations[orientation] !== 'undefined' ? data.options.animations[orientation] : false,
 				animation = data.options.animation;
-				
+			
+				methods._log(internal_map, external_map, animation);
 			// no animation
 			if (typeof internal_map[animation] === 'undefined' && (!external_map || typeof external_map[animation] === 'undefined')) {
 				methods._log('transition: no animation found');
